@@ -6,9 +6,9 @@ const Display = ({ id, productId, onSave }) => {
   const products = useProducts();
   const [open, setOpen] = useState(false);
 
-//   useEffect(() => {
-//     console.log(products)
-//   }, [products])
+  useEffect(() => {
+    console.log(productId)
+  }, [])
 
   const product = products.find((p) => p.id === productId);
 
@@ -17,11 +17,11 @@ const Display = ({ id, productId, onSave }) => {
       {product ? (
         <>
           <img
-            src={product.imageUrl}
+            src={product.image_url}
             alt={product.name}
             className="w-10 h-10 object-contain"
           />
-          <div className="text-xs text-center mt-1 truncate">
+          <div className="text-xs text-center mt-1 truncate w-30 px-1">
             {product.name}
           </div>
         </>

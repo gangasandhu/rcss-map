@@ -33,7 +33,7 @@ const ProductPicker = ({ products, onSelect, onClose }) => {
               className="flex items-center gap-3 w-full p-2 rounded hover:bg-base-200 text-left"
             >
               <img
-                src={p.imageUrl}
+                src={p.image_url}
                 alt={p.name}
                 className="w-10 h-10 object-contain bg-base-200 rounded"
               />

@@ -1,19 +1,17 @@
-
 import { useEffect, useState } from "react";
-
-const SHEET_URL = import.meta.env.VITE_PRODUCTS_SHEET_URL
-  
+import { supabase } from "../supabaseClient";
 
 export default function useProducts() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch(SHEET_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch(console.error);
+    supabase
+      .from("products")
+      .select("*")
+      .order("created_at")
+      .then(({ data }) => {
+        setProducts(data || []);
+      });
   }, []);
 
   return products;
