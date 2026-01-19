@@ -1,75 +1,53 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import ProductPicker from "./ProductPicker";
+import useProducts from "../hooks/useProducts";
 
-const Display = ({ id, productName, image, onSave }) => {
-    const [editing, setEditing] = useState(false);
-    const [name, setName] = useState(productName || "");
-    const [img, setImg] = useState(image || "");
+const Display = ({ id, productId, onSave }) => {
+  const products = useProducts();
+  const [open, setOpen] = useState(false);
 
-    const save = () => {
-        setEditing(false);
-        onSave(id, name.trim(), img.trim());
-    };
+//   useEffect(() => {
+//     console.log(products)
+//   }, [products])
 
-    return (
-        <div className="w-full h-full border border-base-300 rounded bg-base-100 shadow-sm flex flex-col overflow-hidden">
-            {/* Header */}
-            <div className="h-6 bg-base-200 text-[10px] px-1 flex items-center truncate">
-                {editing ? (
-                    <input
-                        className="input input-xs w-full"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Product name"
-                    />
-                ) : (
-                    <span
-                        className="cursor-pointer truncate"
-                        onClick={() => setEditing(true)}
-                    >
-                        {productName || "Empty"}
-                    </span>
-                )}
-            </div>
+  const product = products.find((p) => p.id === productId);
 
-            {/* Image */}
-            <div
-                className="flex-1 bg-base-100 flex items-center justify-center cursor-pointer"
-                onClick={() => setEditing(true)}
-            >
-                {img ? (
-                    <img
-                        src={img}
-                        alt={name}
-                        className="
-                                w-10
-                                h-10
-                                object-contain
-                                p-1
-                            "
-                    />
+  return (
+    <div className="w-full h-full bg-base-100 border rounded p-1 flex flex-col items-center justify-center">
+      {product ? (
+        <>
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-10 h-10 object-contain"
+          />
+          <div className="text-xs text-center mt-1 truncate">
+            {product.name}
+          </div>
+        </>
+      ) : (
+        <div className="text-xs opacity-40">Empty</div>
+      )}
 
-                ) : (
-                    <span className="text-[10px] text-base-content/40">
-                        No image
-                    </span>
-                )}
-            </div>
-
-            {/* Image URL input (edit mode only) */}
-            {editing && (
-                <div className="p-1 border-t border-base-300">
-                    <input
-                        className="input input-xs w-full"
-                        value={img}
-                        onChange={(e) => setImg(e.target.value)}
-                        placeholder="Image URL"
-                        onBlur={save}
-                        onKeyDown={(e) => e.key === "Enter" && save()}
-                    />
-                </div>
-            )}
-        </div>
-    );
+      <button
+        className="btn btn-xs btn-ghost mt-1"
+        onClick={() => setOpen(true)}
+      >
+        Change
+      </button>
+      {/* {open && <div>{products[0].name}</div>} */}
+      {open && (
+        <ProductPicker
+          products={products}
+          onClose={() => setOpen(false)}
+          onSelect={(p) => {
+            onSave(id, p.id);
+            setOpen(false);
+          }}
+        />
+      )}
+    </div>
+  );
 };
 
 export default Display;

@@ -14,15 +14,15 @@ const Map = () => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(displays));
     }, [displays]);
 
-    const handleSave = (id, newName, newImage) => {
+    const handleSave = (id, productId) => {
+        console.log(id, productId)
         setDisplays((prev) =>
             prev.map((d) =>
-                d.id === id
-                    ? { ...d, productName: newName, image: newImage }
-                    : d
+                d.id === id ? { ...d, productId } : d
             )
         );
     };
+
 
 
     return (
@@ -51,8 +51,7 @@ const Map = () => {
                         >
                             <Display
                                 id={slot.id}
-                                productName={slot.productName}
-                                image={slot.image}
+                                productId={slot.productId}
                                 onSave={handleSave}
                             />
 

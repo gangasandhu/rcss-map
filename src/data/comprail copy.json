@@ -1,0 +1,47 @@
+[
+ { "id": "T01", "productId": "", "image": "", "row": 1, "col": 2 },
+  { "id": "T02", "productId": "", "image": "", "row": 1, "col": 3 },
+  { "id": "T03", "productId": "", "image": "", "row": 1, "col": 4 },
+  { "id": "T04", "productId": "", "image": "", "row": 1, "col": 5 },
+
+  { "id": "L01", "productId": "", "image": "", "row": 2, "col": 1 },
+  { "id": "L02", "productId": "", "image": "", "row": 3, "col": 1 },
+
+  { "id": "R01", "productId": "", "image": "", "row": 2, "col": 9 },
+  { "id": "R02", "productId": "", "image": "", "row": 3, "col": 9 },
+  { "id": "R03", "productId": "", "image": "", "row": 4, "col": 9 },
+  { "id": "R04", "productId": "", "image": "", "row": 5, "col": 9 },
+  { "id": "R05", "productId": "", "image": "", "row": 6, "col": 9 },
+  { "id": "R06", "productId": "", "image": "", "row": 7, "col": 9 },
+
+  { "id": "D01", "productId": "", "image": "", "row": 3, "col": 3 },
+  { "id": "D02", "productId": "", "image": "", "row": 3, "col": 4 },
+  { "id": "D03", "productId": "", "image": "", "row": 3, "col": 5 },
+  { "id": "D04", "productId": "", "image": "", "row": 4, "col": 3 },
+  { "id": "D05", "productId": "", "image": "", "row": 4, "col": 4 },
+  { "id": "D06", "productId": "", "image": "", "row": 4, "col": 5 },
+
+  { "id": "D07", "productId": "", "image": "", "row": 2, "col": 7 },
+  { "id": "D08", "productId": "", "image": "", "row": 3, "col": 7 },
+  { "id": "D09", "productId": "", "image": "", "row": 4, "col": 7 },
+
+  { "id": "P01", "productId": "", "image": "", "row": 9, "col": 7 },
+  { "id": "P02", "productId": "", "image": "", "row": 10, "col": 7 },
+  { "id": "P03", "productId": "", "image": "", "row": 11, "col": 7 },
+  { "id": "P04", "productId": "", "image": "", "row": 12, "col": 7 },
+  { "id": "P05", "productId": "", "image": "", "row": 9, "col": 8 },
+  { "id": "P06", "productId": "", "image": "", "row": 10, "col": 8 },
+  { "id": "P07", "productId": "", "image": "", "row": 11, "col": 8 },
+  { "id": "P08", "productId": "", "image": "", "row": 12, "col": 8 },
+
+  { "id": "P10", "productId": "", "image": "", "row": 5, "col": 1 },
+  { "id": "P11", "productId": "", "image": "", "row": 6, "col": 1 },
+  { "id": "P12", "productId": "", "image": "", "row": 7, "col": 1 },
+  { "id": "P13", "productId": "", "image": "", "row": 8, "col": 1 },
+  { "id": "P14", "productId": "", "image": "", "row": 9, "col": 1 },
+  { "id": "P15", "productId": "", "image": "", "row": 10, "col": 1 },
+  { "id": "P16", "productId": "", "image": "", "row": 11, "col": 1 },
+  { "id": "P17", "productId": "", "image": "", "row": 12, "col": 1 },
+  { "id": "P18", "productId": "", "image": "", "row": 13, "col": 1 },
+  { "id": "P19", "productId": "", "image": "", "row": 14, "col": 1 }
+]
