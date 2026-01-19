@@ -6,7 +6,7 @@ function App() {
 
   return (
     <div data-theme="light">
-      <div className='flex items-center justify-center'>
+      <div>
         <Map />
       </div>
     </div>
