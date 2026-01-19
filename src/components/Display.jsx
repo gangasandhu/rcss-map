@@ -10,9 +10,9 @@ const Display = ({ id, productName, onSave }) => {
   };
 
   return (
-    <div className="w-40 h-32 border border-base-300 rounded-lg bg-base-100 shadow-sm flex flex-col">
+    <div className="w-20 h-16 border border-base-300 rounded-lg bg-base-100 shadow-sm flex flex-col">
       {/* Top label */}
-      <div className="h-8 bg-base-200 text-xs font-medium px-2 flex items-center rounded-t-lg">
+      <div className="h-[25%] bg-base-200 text-xs font-medium px-2 flex items-center rounded-t-lg">
         {isEditing ? (
           <input
             autoFocus

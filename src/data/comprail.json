@@ -1,18 +1,47 @@
 [
-  {
-    "id": "CR-01",
-    "productName": "Lay’s Classic"
-  },
-  {
-    "id": "CR-02",
-    "productName": "Coca-Cola 500ml"
-  },
-  {
-    "id": "CR-03",
-    "productName": "KitKat"
-  },
-  {
-    "id": "CR-04",
-    "productName": ""
-  }
+ { "id": "T01", "productName": "", "row": 1, "col": 2 },
+  { "id": "T02", "productName": "", "row": 1, "col": 3 },
+  { "id": "T03", "productName": "", "row": 1, "col": 4 },
+  { "id": "T04", "productName": "", "row": 1, "col": 5 },
+
+  { "id": "L01", "productName": "", "row": 2, "col": 1 },
+  { "id": "L02", "productName": "", "row": 3, "col": 1 },
+
+  { "id": "R01", "productName": "", "row": 2, "col": 9 },
+  { "id": "R02", "productName": "", "row": 3, "col": 9 },
+  { "id": "R03", "productName": "", "row": 4, "col": 9 },
+  { "id": "R04", "productName": "", "row": 5, "col": 9 },
+  { "id": "R05", "productName": "", "row": 6, "col": 9 },
+  { "id": "R06", "productName": "", "row": 7, "col": 9 },
+
+  { "id": "D01", "productName": "", "row": 3, "col": 3 },
+  { "id": "D02", "productName": "", "row": 3, "col": 4 },
+  { "id": "D03", "productName": "", "row": 3, "col": 5 },
+  { "id": "D04", "productName": "", "row": 4, "col": 3 },
+  { "id": "D05", "productName": "", "row": 4, "col": 4 },
+  { "id": "D06", "productName": "", "row": 4, "col": 5 },
+
+  { "id": "D07", "productName": "", "row": 2, "col": 7 },
+  { "id": "D08", "productName": "", "row": 3, "col": 7 },
+  { "id": "D09", "productName": "", "row": 4, "col": 7 },
+
+  { "id": "P01", "productName": "", "row": 9, "col": 7 },
+  { "id": "P02", "productName": "", "row": 10, "col": 7 },
+  { "id": "P03", "productName": "", "row": 11, "col": 7 },
+  { "id": "P04", "productName": "", "row": 12, "col": 7 },
+  { "id": "P05", "productName": "", "row": 9, "col": 8 },
+  { "id": "P06", "productName": "", "row": 10, "col": 8 },
+  { "id": "P07", "productName": "", "row": 11, "col": 8 },
+  { "id": "P08", "productName": "", "row": 12, "col": 8 },
+
+  { "id": "P10", "productName": "", "row": 5, "col": 1 },
+  { "id": "P11", "productName": "", "row": 6, "col": 1 },
+  { "id": "P12", "productName": "", "row": 7, "col": 1 },
+  { "id": "P13", "productName": "", "row": 8, "col": 1 },
+  { "id": "P14", "productName": "", "row": 9, "col": 1 },
+  { "id": "P15", "productName": "", "row": 10, "col": 1 },
+  { "id": "P16", "productName": "", "row": 11, "col": 1 },
+  { "id": "P17", "productName": "", "row": 12, "col": 1 },
+  { "id": "P18", "productName": "", "row": 13, "col": 1 },
+  { "id": "P19", "productName": "", "row": 14, "col": 1 }
 ]
