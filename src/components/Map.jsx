@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Display from "./Display";
-import compRailData from "../data/compRail.json";
+import comprailData from "../data/comprail.json";
 
-const STORAGE_KEY = "compRailDisplays";
+const STORAGE_KEY = "comprailDisplays";
 
 const Map = () => {
     const [displays, setDisplays] = useState(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : compRailData;
+        return saved ? JSON.parse(saved) : comprailData;
     });
 
     useEffect(() => {
