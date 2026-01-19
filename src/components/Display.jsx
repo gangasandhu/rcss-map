@@ -1,31 +1,31 @@
 import React, { useState } from "react";
 
 const Display = ({ id, productName, onSave }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(productName);
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const save = () => {
+    setEditing(false);
     onSave(id, value.trim());
   };
 
   return (
-    <div className="w-20 h-16 border border-base-300 rounded-lg bg-base-100 shadow-sm flex flex-col">
-      {/* Top label */}
-      <div className="h-[25%] bg-base-200 text-xs font-medium px-2 flex items-center rounded-t-lg">
-        {isEditing ? (
+    <div className="w-full h-full border border-base-300 rounded bg-base-100 shadow-sm flex flex-col">
+      {/* Label */}
+      <div className="h-6 bg-base-200 text-[10px] px-1 flex items-center rounded-t truncate">
+        {editing ? (
           <input
             autoFocus
             className="input input-xs w-full"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            onBlur={handleSave}
-            onKeyDown={(e) => e.key === "Enter" && handleSave()}
+            onBlur={save}
+            onKeyDown={(e) => e.key === "Enter" && save()}
           />
         ) : (
           <span
-            className="truncate cursor-pointer"
-            onClick={() => setIsEditing(true)}
+            className="cursor-pointer truncate"
+            onClick={() => setEditing(true)}
           >
             {productName || "Empty"}
           </span>
@@ -33,7 +33,7 @@ const Display = ({ id, productName, onSave }) => {
       </div>
 
       {/* Body */}
-      <div className="flex-1 flex items-center justify-center text-base-content/50 text-sm">
+      <div className="flex-1 flex items-center justify-center text-xs text-base-content/50">
         {id}
       </div>
     </div>
