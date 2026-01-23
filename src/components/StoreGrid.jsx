@@ -3,14 +3,14 @@ import Display from "./Display";
 
 const StoreGrid = ({ 
     displays, 
-    products, 
     onSave, 
     isBlueprint, 
     onAddDisplay, 
     onDeleteDisplay,
+    searchQuery, // Add this to pass search down
     rows = 20,
     cols = 40,
-    zone // passed down just for reference when adding new displays
+    zone 
 }) => {
     // Coordinate lookup
     const displayMap = {};
@@ -25,19 +25,25 @@ const StoreGrid = ({
 
         const id = window.prompt(`New Display ID for ${zone}:`);
         if (id) {
-            onAddDisplay({ id, col, row, zone, product_id: null });
+            // Updated to match your new schema
+            onAddDisplay({ 
+                id, 
+                col, 
+                row, 
+                zone, 
+                image_url: null, 
+                manual_name: "" 
+            });
         }
     };
 
     return (
         <>
-            {/* Generate Grid Cells */}
             {Array.from({ length: cols * rows }).map((_, i) => {
                 const col = (i % cols) + 1;
                 const row = Math.floor(i / cols) + 1;
                 const slot = displayMap[`${col}-${row}`];
 
-                // If not blueprint and no display here, render nothing (invisible cell)
                 if (!isBlueprint && !slot) return <div key={`${col}-${row}`} style={{ gridColumn: col, gridRow: row }} />;
 
                 return (
@@ -46,7 +52,7 @@ const StoreGrid = ({
                         style={{ gridColumn: col, gridRow: row }}
                         onClick={() => handleCellClick(col, row)}
                         className={`relative w-[130px] h-[110px] transition-all
-                            ${isBlueprint && !slot ? "border border-base-content/5 hover:bg-primary/5 cursor-crosshair group flex items-center justify-center" : ""}`}
+                            ${isBlueprint && !slot ? "border border-dashed border-base-content/20 hover:bg-primary/5 cursor-crosshair group flex items-center justify-center" : ""}`}
                     >
                         {isBlueprint && !slot && (
                             <span className="opacity-0 group-hover:opacity-100 text-primary font-bold">+</span>
@@ -54,16 +60,19 @@ const StoreGrid = ({
 
                         {slot && (
                             <div className="w-full h-full p-1 relative">
+                                {/* FIX: Pass the correct image and name props here */}
                                 <Display
                                     id={slot.id}
-                                    productId={slot.product_id}
-                                    products={products}
+                                    imageUrl={slot.image_url}   // New prop
+                                    manualName={slot.manual_name} // New prop
+                                    searchQuery={searchQuery}    // For highlighting
                                     onSave={onSave}
                                 />
+                                
                                 {isBlueprint && (
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onDeleteDisplay(slot.id); }}
-                                        className="absolute -top-1 -right-1 btn btn-circle btn-xs btn-error z-50"
+                                        className="absolute -top-1 -right-1 btn btn-circle btn-xs btn-error z-50 shadow-sm"
                                     >✕</button>
                                 )}
                             </div>
