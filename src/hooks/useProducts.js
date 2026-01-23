@@ -3,29 +3,29 @@ import { supabase } from "../supabaseClient";
 
 export default function useProducts() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true); // 1. Default to true
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchProducts() {
       try {
         setLoading(true);
+        // We only select the columns we actually need for the list
         const { data, error } = await supabase
           .from("products")
-          .select("*")
-          .order("created_at");
+          .select("id, name") 
+          .order("name"); // Alphabetical is easier for data entry
 
         if (error) throw error;
         setProducts(data || []);
       } catch (error) {
-        console.error("Error fetching products:", error.message);
+        console.error("Error:", error.message);
       } finally {
-        setLoading(false); // 2. Turn off spinner regardless of success/fail
+        setLoading(false);
       }
     }
 
     fetchProducts();
   }, []);
 
-  // 3. Return an object instead of just the array
   return { products, loading };
 }

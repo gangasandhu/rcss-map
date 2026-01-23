@@ -1,57 +1,49 @@
 import { useState } from "react";
 import ProductPicker from "./ProductPicker";
 import useProducts from "../hooks/useProducts";
+import { memo } from "react";
 
-const Display = ({ id, productId, onSave }) => {
-    // Assuming your hook returns { products, loading }
-    // If it only returns an array, you might need to check if products.length === 0
-    const { products, loading } = useProducts(); 
+const Display = memo(({ id, productId, onSave, products, loading }) => {
     const [open, setOpen] = useState(false);
     
     const product = products?.find((p) => p.id === productId);
 
     return (
-        <div className={`card card-compact w-full h-full shadow-md transition-transform duration-200 hover:scale-105
-            ${product ? "bg-base-100 border-none" : "bg-base-100 border-2 border-dashed border-base-content/10"}`}>
+        <div className={`card card-compact w-full h-full shadow-sm transition-all border
+            ${product 
+                ? "bg-base-100 border-base-300" 
+                : "bg-base-100/30 border-dashed border-base-content/10"}`}>
 
-            <div className="card-body items-center text-center p-2 relative">
-                <span className="absolute top-1 left-1 text-[10px] font-bold opacity-30 uppercase">{id}</span>
+            <div className="card-body p-2 flex flex-col justify-between items-center relative min-h-[110px]">
+                {/* ID Label - Small and tucked in the corner */}
+                <span className="absolute top-1 left-1 text-[9px] font-black opacity-30 uppercase">
+                    {id}
+                </span>
 
-                {loading ? (
-                    /* --- LOADING STATE --- */
-                    <div className="flex flex-1 items-center justify-center">
-                        <span className="loading loading-spinner loading-sm text-primary/40"></span>
-                    </div>
-                ) : product ? (
-                    /* --- PRODUCT ASSIGNED STATE --- */
-                    <>
-                        <div className="avatar mt-1">
-                            <div className="w-12 h-12 rounded-lg bg-white p-1 shadow-inner border border-base-200">
-                                <img
-                                    src={product.image_url}
-                                    alt={product.name}
-                                    className="object-contain"
-                                />
-                            </div>
+                <div className="flex flex-col items-center justify-center flex-1 w-full text-center mt-2">
+                    {loading ? (
+                        <span className="loading loading-spinner loading-xs opacity-20"></span>
+                    ) : product ? (
+                        <div className="flex flex-col gap-1 w-full">
+                            {/* Product Name - Strong and Clear */}
+                            <h2 className="text-[11px] font-bold leading-tight line-clamp-3 text-base-content uppercase tracking-tight">
+                                {product.name}
+                            </h2>
+                           
                         </div>
-                        <h2 className="text-[11px] font-medium leading-tight line-clamp-2 mt-1 h-6">
-                            {product.name}
-                        </h2>
-                    </>
-                ) : (
-                    /* --- EMPTY STATE --- */
-                    <div className="flex flex-col items-center justify-center flex-1">
-                        <div className="text-[10px] font-semibold tracking-widest opacity-40">EMPTY</div>
-                    </div>
-                )}
+                    ) : (
+                        <div className="text-[10px] font-bold opacity-10 tracking-widest">EMPTY</div>
+                    )}
+                </div>
 
-                <div className="card-actions w-full mt-auto">
+                <div className="card-actions w-full">
                     <button
                         disabled={loading}
-                        className={`btn btn-xs btn-block ${product ? 'btn-ghost text-primary' : 'btn-outline btn-neutral'}`}
+                        className={`btn btn-xs btn-block border-none shadow-none font-bold
+                            ${product ? 'bg-primary/10 text-primary hover:bg-primary/20' : 'bg-base-200 text-base-content/40'}`}
                         onClick={() => setOpen(true)}
                     >
-                        {product ? "Edit" : "Assign"}
+                        {product ? "CHANGE" : "ASSIGN"}
                     </button>
                 </div>
             </div>
@@ -68,6 +60,6 @@ const Display = ({ id, productId, onSave }) => {
             )}
         </div>
     );
-};
+});
 
 export default Display;
