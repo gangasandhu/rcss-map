@@ -49,7 +49,12 @@ const Display = ({ id, imageUrl, manualName, onSave, searchQuery }) => {
             {/* IMAGE SECTION */}
             <div className="relative h-16 bg-base-300 overflow-hidden rounded-t-md">
                 {imageUrl ? (
-                    <img src={imageUrl} className="w-full h-full object-cover" />
+                    <img
+                        // Adding ?v= plus a timestamp makes the browser treat it as a brand new request
+                        src={`${imageUrl}?v=${new Date().getTime()}`}
+                        className="w-full h-full object-cover"
+                        alt={localName}
+                    />
                 ) : (
                     <div className="h-full flex items-center justify-center opacity-20 text-xs">NO PHOTO</div>
                 )}
