@@ -4,152 +4,114 @@ import StoreMapCanvas from "./MapCanvas";
 import StoreGrid from "./StoreGrid";
 
 const Map = () => {
-    // State Management
-    const [view, setView] = useState("comp_rail"); // 'comp_rail' or 'end_cap'
+    const [view, setView] = useState("comp_rail");
     const [isBlueprint, setIsBlueprint] = useState(false);
+    const [placementMode, setPlacementMode] = useState("label"); // New: "label" or "display"
     const [searchQuery, setSearchQuery] = useState("");
     const [displays, setDisplays] = useState([]);
+    const [labels, setLabels] = useState([]); // New state for labels
     const [loading, setLoading] = useState(false);
 
-    // 1. Fetch data based on the active zone
+    // 1. Fetch Displays AND Labels
     useEffect(() => {
-        const fetchDisplays = async () => {
+        const fetchData = async () => {
             setLoading(true);
-            const { data, error } = await supabase
-                .from("displays")
-                .select("*")
-                .eq("zone", view);
+            const [dispRes, labRes] = await Promise.all([
+                supabase.from("displays").select("*").eq("zone", view),
+                supabase.from("labels").select("*").eq("zone", view)
+            ]);
 
-            if (!error) {
-                setDisplays(data || []);
-            }
+            if (!dispRes.error) setDisplays(dispRes.data || []);
+            if (!labRes.error) setLabels(labRes.data || []);
             setLoading(false);
         };
-        fetchDisplays();
+        fetchData();
     }, [view]);
 
-    // 2. Handle Saves (Photos and Names)
+    // 2. Handle Saves (Displays)
     const handleSave = async (displayId, updates) => {
-        // Optimistic UI update
-        setDisplays(prev => prev.map(d => 
-            d.id === displayId ? { ...d, ...updates } : d
-        ));
-
-        const { error } = await supabase
-            .from("displays")
-            .update({
-                image_url: updates.image_url,
-                manual_name: updates.manual_name,
-                updated_at: new Date()
-            })
-            .eq("id", displayId);
-
-        if (error) console.error("Database update failed:", error.message);
+        setDisplays(prev => prev.map(d => d.id === displayId ? { ...d, ...updates } : d));
+        await supabase.from("displays").update({ ...updates, updated_at: new Date() }).eq("id", displayId);
     };
 
-    // 3. Blueprint: Add New Slot
-    const handleAddDisplay = async (newDisplay) => {
-        const { data, error } = await supabase
-            .from("displays")
-            .insert([newDisplay])
-            .select();
-
-        if (!error) {
-            setDisplays(prev => [...prev, data[0]]);
+    // 3. Blueprint: Add Logic
+    const handleAddItem = async (col, row) => {
+        if (placementMode === "display") {
+            const id = window.prompt("New Display ID:");
+            if (!id) return;
+            const newDisp = { id, col, row, zone: view, manual_name: "" };
+            const { data, error } = await supabase.from("displays").insert([newDisp]).select();
+            if (!error) setDisplays(prev => [...prev, data[0]]);
         } else {
-            alert("Error adding slot: " + error.message);
+            const text = window.prompt("Label Text (e.g. Aisle 1):");
+            if (!text) return;
+            const newLab = { text, col, row, zone: view };
+            const { data, error } = await supabase.from("labels").insert([newLab]).select();
+            if (!error) setLabels(prev => [...prev, data[0]]);
         }
     };
 
-    // 4. Blueprint: Delete Slot
-    const handleDeleteDisplay = async (displayId) => {
-        if (!window.confirm("Delete this display location?")) return;
-
-        const { error } = await supabase
-            .from("displays")
-            .delete()
-            .eq("id", displayId);
-
+    // 4. Blueprint: Delete Logic
+    const handleDeleteItem = async (id, type) => {
+        if (!window.confirm(`Delete this ${type}?`)) return;
+        const table = type === "display" ? "displays" : "labels";
+        const { error } = await supabase.from(table).delete().eq("id", id);
         if (!error) {
-            setDisplays(prev => prev.filter(d => d.id !== displayId));
+            if (type === "display") setDisplays(prev => prev.filter(d => d.id !== id));
+            else setLabels(prev => prev.filter(l => l.id !== id));
         }
     };
 
     return (
         <div className="min-h-screen bg-base-200 p-2 md:p-4 pb-24">
             <div className="max-w-[2400px] mx-auto">
-                
-                {/* TOP CONTROL BAR */}
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 sticky top-0 z-[100] bg-base-200/80 backdrop-blur pb-4">
                     
-                    {/* Zone Selector */}
-                    <div className="tabs tabs-boxed bg-base-100 p-1 border border-base-300 shadow-sm">
-                        <button 
-                            className={`tab tab-md font-bold ${view === 'comp_rail' ? 'tab-active' : ''}`}
-                            onClick={() => setView('comp_rail')}
-                        >
-                            Comp Rail
-                        </button>
-                        <button 
-                            className={`tab tab-md font-bold ${view === 'end_cap' ? 'tab-active' : ''}`}
-                            onClick={() => setView('end_cap')}
-                        >
-                            End Caps
-                        </button>
+                    <div className="flex gap-2 items-center">
+                        <div className="tabs tabs-boxed bg-base-100 border border-base-300">
+                            <button className={`tab ${view === 'comp_rail' ? 'tab-active' : ''}`} onClick={() => setView('comp_rail')}>Comp Rail</button>
+                            <button className={`tab ${view === 'end_cap' ? 'tab-active' : ''}`} onClick={() => setView('end_cap')}>End Caps</button>
+                        </div>
                     </div>
 
-                    {/* Search Bar */}
                     <div className="relative w-full max-w-md">
-                        <input 
-                            type="text"
-                            placeholder="🔍 Search items (e.g. 'Oreo', 'Coke')..."
-                            className="input input-bordered w-full shadow-inner"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        {searchQuery && (
-                            <button 
-                                onClick={() => setSearchQuery("")}
-                                className="absolute right-3 top-3 btn btn-circle btn-xs"
-                            >✕</button>
-                        )}
+                        <input type="text" placeholder="🔍 Search items..." className="input input-bordered w-full" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                     </div>
 
-                    {/* Blueprint Toggle */}
-                    <button 
-                        onClick={() => setIsBlueprint(!isBlueprint)}
-                        className={`btn btn-md gap-2 shadow-md transition-all ${
-                            isBlueprint ? 'btn-secondary' : 'btn-ghost bg-base-100 border-base-300'
-                        }`}
-                    >
-                        {isBlueprint ? "EXIT EDIT MODE" : "⚙️ EDIT LAYOUT"}
-                    </button>
+                    <div className="flex items-center gap-2 bg-base-100 p-2 rounded-lg border border-base-300 shadow-sm">
+                        {isBlueprint && (
+                            <select 
+                                className="select select-bordered select-sm font-bold text-primary"
+                                value={placementMode}
+                                onChange={(e) => setPlacementMode(e.target.value)}
+                            >
+                                <option value="label">Mode: Label</option>
+                                <option value="display">Mode: Display</option>
+                            </select>
+                        )}
+                        <button 
+                            onClick={() => setIsBlueprint(!isBlueprint)}
+                            className={`btn btn-sm ${isBlueprint ? 'btn-secondary' : 'btn-ghost border-base-300'}`}
+                        >
+                            {isBlueprint ? "EXIT EDIT" : "⚙️ LAYOUT"}
+                        </button>
+                    </div>
                 </div>
 
-                {/* THE GRID CANVAS */}
-                <StoreMapCanvas 
-                    cols={view === 'comp_rail' ? 12 : 42} 
-                    rows={20}
-                >
-                    {loading ? (
-                        <div className="col-span-full row-span-full flex flex-col items-center justify-center min-h-[400px]">
-                            <span className="loading loading-spinner loading-lg text-primary"></span>
-                        </div>
-                    ) : (
-                        <StoreGrid 
-                            zone={view}
-                            displays={displays}
-                            searchQuery={searchQuery} // Pass search down to highlight items
-                            isBlueprint={isBlueprint}
-                            onSave={handleSave}
-                            onAddDisplay={handleAddDisplay}
-                            onDeleteDisplay={handleDeleteDisplay}
-                            cols={view === 'comp_rail' ? 12 : 42}
-                            rows={20}
-                        />
-                    )}
+                <StoreMapCanvas cols={view === 'comp_rail' ? 12 : 42} rows={20}>
+                    <StoreGrid 
+                        zone={view}
+                        displays={displays}
+                        labels={labels} // New prop
+                        searchQuery={searchQuery}
+                        isBlueprint={isBlueprint}
+                        onSave={handleSave}
+                        onAddItem={handleAddItem} // Unified add function
+                        onDeleteItem={handleDeleteItem} // Unified delete function
+                        cols={view === 'comp_rail' ? 12 : 42}
+                        rows={20}
+                    />
                 </StoreMapCanvas>
-
             </div>
         </div>
     );
