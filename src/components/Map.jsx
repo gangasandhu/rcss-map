@@ -47,13 +47,27 @@ const Map = () => {
     // 3. Blueprint: Add Logic
     const handleAddItem = async (col, row) => {
         if (placementMode === "display") {
-            const id = window.prompt("New Display ID:");
-            if (!id) return;
-            const newDisp = { id, col, row, zone: view, manual_name: "" };
-            const { data, error } = await supabase.from("displays").insert([newDisp]).select();
-            if (!error) setDisplays(prev => [...prev, data[0]]);
+            // Supabase will generate the 8-char random ID.
+            const newDisp = {
+                col,
+                row,
+                zone: view,
+                manual_name: ""
+            };
+
+            const { data, error } = await supabase
+                .from("displays")
+                .insert([newDisp])
+                .select();
+
+            if (error) {
+                console.error("Insert error:", error.message);
+            } else {
+                setDisplays(prev => [...prev, data[0]]);
+            }
         } else {
-            const text = window.prompt("Label Text (e.g. Aisle 1):");
+            // Labels still need text because they are markers
+            const text = window.prompt("Label Text:");
             if (!text) return;
             const newLab = { text, col, row, zone: view };
             const { data, error } = await supabase.from("labels").insert([newLab]).select();
@@ -74,26 +88,26 @@ const Map = () => {
 
     return (
         <div className="min-h-screen bg-base-200 flex flex-col">
-            
+
             {/* TOP BAR: Search and Edit Mode only */}
             <div className="sticky top-0 z-[100] bg-base-200/90 backdrop-blur p-4 border-b border-base-300">
                 <div className="max-w-[2400px] mx-auto flex justify-between items-center gap-4">
-                    
+
                     {/* Search Bar */}
                     <div className="relative flex-grow max-w-md">
-                        <input 
-                            type="text" 
-                            placeholder="🔍 Search items..." 
-                            className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-primary/20" 
-                            value={searchQuery} 
-                            onChange={(e) => setSearchQuery(e.target.value)} 
+                        <input
+                            type="text"
+                            placeholder="🔍 Search items..."
+                            className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-primary/20"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
                     {/* Blueprint Settings */}
                     <div className="flex items-center gap-2">
                         {isBlueprint && (
-                            <select 
+                            <select
                                 className="select select-bordered select-sm font-bold text-primary hidden md:block"
                                 value={placementMode}
                                 onChange={(e) => setPlacementMode(e.target.value)}
@@ -102,7 +116,7 @@ const Map = () => {
                                 <option value="display">Mode: Display</option>
                             </select>
                         )}
-                        <button 
+                        <button
                             onClick={() => setIsBlueprint(!isBlueprint)}
                             className={`btn btn-sm shadow-sm ${isBlueprint ? 'btn-secondary' : 'btn-ghost bg-base-100 border-base-300'}`}
                         >
@@ -116,7 +130,7 @@ const Map = () => {
             <main className="flex-grow p-2 pb-32"> {/* Extra padding bottom for the nav bar */}
                 <div className="max-w-[2400px] mx-auto">
                     <StoreMapCanvas cols={currentZone.cols} rows={20}>
-                        <StoreGrid 
+                        <StoreGrid
                             zone={view}
                             displays={displays}
                             labels={labels}
@@ -135,16 +149,16 @@ const Map = () => {
             {/* BOTTOM NAVIGATION BAR (The Zone Bar) */}
             <div className="fixed bottom-0 left-0 right-0 z-[200] bg-base-100 border-t border-base-300 px-2 py-3 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
                 <div className="max-w-md mx-auto">
-                    
+
                     {/* Floating Placement Mode for Mobile Edit Mode */}
                     {isBlueprint && (
                         <div className="flex justify-center mb-3 md:hidden">
                             <div className="join border border-base-300 shadow-sm">
-                                <button 
+                                <button
                                     className={`join-item btn btn-xs ${placementMode === 'label' ? 'btn-primary' : 'btn-ghost'}`}
                                     onClick={() => setPlacementMode('label')}
                                 >Label</button>
-                                <button 
+                                <button
                                     className={`join-item btn btn-xs ${placementMode === 'display' ? 'btn-primary' : 'btn-ghost'}`}
                                     onClick={() => setPlacementMode('display')}
                                 >Display</button>
@@ -156,9 +170,9 @@ const Map = () => {
                     <div className="flex overflow-x-auto no-scrollbar justify-center">
                         <div className="tabs tabs-boxed bg-transparent p-0 flex-nowrap gap-1">
                             {ZONES.map((zone) => (
-                                <button 
+                                <button
                                     key={zone.id}
-                                    className={`tab tab-md font-bold transition-all ${view === zone.id ? 'tab-active !bg-primary !text-white' : 'opacity-60'}`} 
+                                    className={`tab tab-md font-bold transition-all ${view === zone.id ? 'tab-active !bg-primary !text-white' : 'opacity-60'}`}
                                     onClick={() => setView(zone.id)}
                                 >
                                     {zone.label}

@@ -85,7 +85,6 @@ const Display = ({ id, imageUrl, manualName, onSave, searchQuery }) => {
                         zIndex: 101
                     }}
                 />
-                <div className="text-[8px] opacity-30 text-center font-mono uppercase">{id}</div>
             </div>
         </div>
     );
