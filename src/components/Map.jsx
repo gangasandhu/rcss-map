@@ -4,15 +4,25 @@ import StoreMapCanvas from "./MapCanvas";
 import StoreGrid from "./StoreGrid";
 
 const Map = () => {
+    const ZONES = [
+        { id: "comp_rail", label: "Comp Rail", cols: 12 },
+        { id: "end_cap", label: "End Caps", cols: 42 },
+        { id: "dairy", label: "Dairy", cols: 24 },
+        { id: "meat", label: "Meat", cols: 20 },
+        { id: "deli", label: "Deli", cols: 15 },
+    ];
+
     const [view, setView] = useState("comp_rail");
     const [isBlueprint, setIsBlueprint] = useState(false);
-    const [placementMode, setPlacementMode] = useState("label"); // New: "label" or "display"
+    const [placementMode, setPlacementMode] = useState("label");
     const [searchQuery, setSearchQuery] = useState("");
     const [displays, setDisplays] = useState([]);
-    const [labels, setLabels] = useState([]); // New state for labels
+    const [labels, setLabels] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // 1. Fetch Displays AND Labels
+    // Get current zone config
+    const currentZone = ZONES.find(z => z.id === view) || ZONES[0];
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -63,25 +73,28 @@ const Map = () => {
     };
 
     return (
-        <div className="min-h-screen bg-base-200 p-2 md:p-4 pb-24">
-            <div className="max-w-[2400px] mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 sticky top-0 z-[100] bg-base-200/80 backdrop-blur pb-4">
+        <div className="min-h-screen bg-base-200 flex flex-col">
+            
+            {/* TOP BAR: Search and Edit Mode only */}
+            <div className="sticky top-0 z-[100] bg-base-200/90 backdrop-blur p-4 border-b border-base-300">
+                <div className="max-w-[2400px] mx-auto flex justify-between items-center gap-4">
                     
-                    <div className="flex gap-2 items-center">
-                        <div className="tabs tabs-boxed bg-base-100 border border-base-300">
-                            <button className={`tab ${view === 'comp_rail' ? 'tab-active' : ''}`} onClick={() => setView('comp_rail')}>Comp Rail</button>
-                            <button className={`tab ${view === 'end_cap' ? 'tab-active' : ''}`} onClick={() => setView('end_cap')}>End Caps</button>
-                        </div>
+                    {/* Search Bar */}
+                    <div className="relative flex-grow max-w-md">
+                        <input 
+                            type="text" 
+                            placeholder="🔍 Search items..." 
+                            className="input input-bordered w-full shadow-sm focus:ring-2 focus:ring-primary/20" 
+                            value={searchQuery} 
+                            onChange={(e) => setSearchQuery(e.target.value)} 
+                        />
                     </div>
 
-                    <div className="relative w-full max-w-md">
-                        <input type="text" placeholder="🔍 Search items..." className="input input-bordered w-full" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-                    </div>
-
-                    <div className="flex items-center gap-2 bg-base-100 p-2 rounded-lg border border-base-300 shadow-sm">
+                    {/* Blueprint Settings */}
+                    <div className="flex items-center gap-2">
                         {isBlueprint && (
                             <select 
-                                className="select select-bordered select-sm font-bold text-primary"
+                                className="select select-bordered select-sm font-bold text-primary hidden md:block"
                                 value={placementMode}
                                 onChange={(e) => setPlacementMode(e.target.value)}
                             >
@@ -91,27 +104,69 @@ const Map = () => {
                         )}
                         <button 
                             onClick={() => setIsBlueprint(!isBlueprint)}
-                            className={`btn btn-sm ${isBlueprint ? 'btn-secondary' : 'btn-ghost border-base-300'}`}
+                            className={`btn btn-sm shadow-sm ${isBlueprint ? 'btn-secondary' : 'btn-ghost bg-base-100 border-base-300'}`}
                         >
-                            {isBlueprint ? "EXIT EDIT" : "⚙️ LAYOUT"}
+                            {isBlueprint ? "EXIT" : "⚙️ LAYOUT"}
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <StoreMapCanvas cols={view === 'comp_rail' ? 12 : 42} rows={20}>
-                    <StoreGrid 
-                        zone={view}
-                        displays={displays}
-                        labels={labels} // New prop
-                        searchQuery={searchQuery}
-                        isBlueprint={isBlueprint}
-                        onSave={handleSave}
-                        onAddItem={handleAddItem} // Unified add function
-                        onDeleteItem={handleDeleteItem} // Unified delete function
-                        cols={view === 'comp_rail' ? 12 : 42}
-                        rows={20}
-                    />
-                </StoreMapCanvas>
+            {/* MAIN CANVAS AREA */}
+            <main className="flex-grow p-2 pb-32"> {/* Extra padding bottom for the nav bar */}
+                <div className="max-w-[2400px] mx-auto">
+                    <StoreMapCanvas cols={currentZone.cols} rows={20}>
+                        <StoreGrid 
+                            zone={view}
+                            displays={displays}
+                            labels={labels}
+                            searchQuery={searchQuery}
+                            isBlueprint={isBlueprint}
+                            onSave={handleSave}
+                            onAddItem={handleAddItem}
+                            onDeleteItem={handleDeleteItem}
+                            cols={currentZone.cols}
+                            rows={20}
+                        />
+                    </StoreMapCanvas>
+                </div>
+            </main>
+
+            {/* BOTTOM NAVIGATION BAR (The Zone Bar) */}
+            <div className="fixed bottom-0 left-0 right-0 z-[200] bg-base-100 border-t border-base-300 px-2 py-3 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+                <div className="max-w-md mx-auto">
+                    
+                    {/* Floating Placement Mode for Mobile Edit Mode */}
+                    {isBlueprint && (
+                        <div className="flex justify-center mb-3 md:hidden">
+                            <div className="join border border-base-300 shadow-sm">
+                                <button 
+                                    className={`join-item btn btn-xs ${placementMode === 'label' ? 'btn-primary' : 'btn-ghost'}`}
+                                    onClick={() => setPlacementMode('label')}
+                                >Label</button>
+                                <button 
+                                    className={`join-item btn btn-xs ${placementMode === 'display' ? 'btn-primary' : 'btn-ghost'}`}
+                                    onClick={() => setPlacementMode('display')}
+                                >Display</button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Scrollable Zone Tabs */}
+                    <div className="flex overflow-x-auto no-scrollbar justify-center">
+                        <div className="tabs tabs-boxed bg-transparent p-0 flex-nowrap gap-1">
+                            {ZONES.map((zone) => (
+                                <button 
+                                    key={zone.id}
+                                    className={`tab tab-md font-bold transition-all ${view === zone.id ? 'tab-active !bg-primary !text-white' : 'opacity-60'}`} 
+                                    onClick={() => setView(zone.id)}
+                                >
+                                    {zone.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
