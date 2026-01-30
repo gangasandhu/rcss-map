@@ -8,7 +8,7 @@ const Map = () => {
         { id: "comp_rail", label: "Comp Rail", cols: 12 },
         { id: "end_cap", label: "End Caps", cols: 42 },
         { id: "dairy", label: "Dairy", cols: 24 },
-        { id: "meat", label: "Meat", cols: 20 },
+        { id: "meat", label: "Meat", cols: 50 },
         { id: "deli", label: "Deli", cols: 15 },
     ];
 
