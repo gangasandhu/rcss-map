@@ -48,7 +48,7 @@ const StoreGrid = ({ displays, labels, onAddItem, onDeleteItem, onSelectDisplay,
                         )}
                         {slot?.type === 'label' && (
                             <div className="w-full h-full flex items-center justify-center relative">
-                                <span className="text-xs font-bold opacity-40 uppercase">{slot.text}</span>
+                                <span className="text-2xl font-extrabold uppercase">{slot.text}</span>
                                 {props.isBlueprint && (
                                     <button 
                                         onClick={(e) => { e.stopPropagation(); onDeleteItem(slot.id, 'label'); }} 
